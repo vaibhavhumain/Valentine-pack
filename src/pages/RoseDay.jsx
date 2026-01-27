@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import roseMusic from "../assets/rose-music.mpeg";
 import roseImg from "../assets/rose.jpg";
 
@@ -10,31 +9,16 @@ const Rose = () => {
   const audioRef = useRef(null);
   const [revealed, setRevealed] = useState(false);
 
+  // 🔐 Safety check only
   useEffect(() => {
     if (!localStorage.getItem("allowed")) {
       navigate("/");
-      return;
     }
-
-    // 🌹 Allow only on Rose Day (7 Feb)
-    // const today = new Date();
-    // const date = today.getDate();
-    // const month = today.getMonth(); // Feb = 1
-
-    // if (month !== 1 || date !== 7) {
-    //   toast.info("🌹 Roses bloom on Rose Day only");
-    //   navigate("/week");
-    // }
   }, [navigate]);
 
   const handleRoseClick = () => {
     setRevealed(true);
-
-    if (audioRef.current) {
-      audioRef.current
-        .play()
-        .catch(() => console.log("Audio blocked until interaction"));
-    }
+    audioRef.current?.play().catch(() => {});
   };
 
   return (
@@ -76,7 +60,6 @@ const Rose = () => {
 
         {!revealed ? (
           <>
-            {/* 🌹 Clickable Rose Image */}
             <motion.img
               src={roseImg}
               alt="Rose"
@@ -94,25 +77,18 @@ const Rose = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
           >
             <p className="text-gray-700 text-lg leading-relaxed">
-              This rose carries everything  
-              I struggle to say out loud…
+              This rose carries everything I struggle to say out loud…
               <br />
               <span className="font-semibold text-rose-500">
                 You make my world softer, warmer, and brighter ❤️
               </span>
             </p>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="mt-6 text-sm text-gray-500 italic"
-            >
+            <p className="mt-6 text-sm text-gray-500 italic">
               Come back tomorrow… I have something important to ask 💍
-            </motion.p>
+            </p>
           </motion.div>
         )}
       </motion.div>
