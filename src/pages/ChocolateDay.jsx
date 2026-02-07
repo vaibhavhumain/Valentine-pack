@@ -119,8 +119,8 @@
 
 export default function page()  {
   return(
-    <div>
-      <div class="flex justify-center">Sabar kro baby 😘😘</div>
-    </div>
+    <>
+      <div style={{ padding: "2rem", fontSize: "2rem" }}>Sabar kro baby 😘😘</div>
+    </>
   )
 }
