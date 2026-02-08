@@ -23,7 +23,6 @@ export default function Quiz() {
   const [showInput, setShowInput] = useState(false);
   const [customAnswer, setCustomAnswer] = useState("");
 
-  /* ✅ SAFE LOCAL STORAGE LOAD */
   useEffect(() => {
     try {
       const stored = localStorage.getItem("loveQuizAnswers");
@@ -33,7 +32,7 @@ export default function Quiz() {
     }
   }, []);
 
-  const saveAnswer = (answer) => {
+  const saveAnswer = async (answer) => {
     const updated = [...answers, { q: questions[current].q, a: answer }];
     setAnswers(updated);
     localStorage.setItem("loveQuizAnswers", JSON.stringify(updated));
@@ -44,14 +43,25 @@ export default function Quiz() {
     if (current < questions.length - 1) {
       setCurrent(current + 1);
     } else {
+      try {
+        await fetch("https://quiz-backend-o8tt.onrender.com/api/quiz/save", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ answers: updated }),
+        });
+      } catch (err) {
+        console.error("Error saving answers:", err);
+      }
+
       setStage("saving");
     }
   };
 
-  /* ⏳ SAVING → FINAL */
   useEffect(() => {
     if (stage === "saving") {
-      const t = setTimeout(() => setStage("final"), 7000);
+      const t = setTimeout(() => setStage("final"), 5000);
       return () => clearTimeout(t);
     }
   }, [stage]);
@@ -127,12 +137,28 @@ export default function Quiz() {
         )}
 
         {stage === "final" && (
-          <motion.div className="bg-white/80 p-10 rounded-3xl text-center shadow-xl">
-            <h2 className="text-2xl font-bold text-pink-700 mb-4">💖 One Last Thing</h2>
-            <p className="leading-relaxed text-gray-700">
-              Whatever your answers were…  
-              <br />my love for you won’t be less.  
-              <br /><br />You are enough. Always 🤍
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white/80 p-10 rounded-3xl text-center shadow-xl max-w-md"
+          >
+            <h2 className="text-3xl font-bold text-pink-700 mb-4">
+              💯 100% Marks
+            </h2>
+
+            <p className="text-gray-700 leading-relaxed">
+              Congratulations baby 🥹💖  
+              <br />You passed every question of my heart.  
+              <br /><br />
+              No matter what you answered,  
+              <br />you already have **all my love**.  
+              <br /><br />
+              I choose you.  
+              <br />Today. Tomorrow. Always ♾️  
+              <br /><br />
+              <span className="font-semibold text-pink-600">
+                I love you 🤍
+              </span>
             </p>
           </motion.div>
         )}
